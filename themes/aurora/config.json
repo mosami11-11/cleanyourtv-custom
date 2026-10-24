@@ -1,4 +1,5 @@
 {
-  "background_color": "#070A14",
-  "wallpaper": true
+    "background_color":  "#070A14",
+    "wallpaper":  true,
+    "tile_menu":  true
 }

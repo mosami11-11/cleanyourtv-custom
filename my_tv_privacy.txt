@@ -1,0 +1,13 @@
+# Privacy audit of the TV at 192.168.1.143, written by tools/privacy.py.
+# Voice, ACR and telemetry candidates this TV answered for. Everything is DISABLED, not
+# uninstalled, and the undo is the one every list uses:
+#   TV_HOST=192.168.1.143 tools/disable.sh privacy.txt
+#   TV_HOST=192.168.1.143 tools/restore.sh privacy.txt
+#
+# Each line says what the package is and why it is here. Nothing below is proven to record
+# anything: the audit reports what the firmware and the packages declare.
+
+# Voice assistants and wake word
+com.google.android.katniss                    # Google Assistant and voice search; the remote's mic button and voice search inside apps go dead without it (named by the TV: voice_interaction_service, voice_recognition_service, assistant)
+
+# Telemetry and analytics

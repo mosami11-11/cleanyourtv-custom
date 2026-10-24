@@ -171,6 +171,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private TextView greeting;
     private View clockBlock;
     private View btnInputs;
+    private NowPlayingCard npCard;
     /** config show_inputs_pill: false keeps the Inputs pill hidden even when the TV has inputs. */
     private boolean showInputsPill = true;
     private TextView btnWifi;
@@ -811,6 +812,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onResume() {
         super.onResume();
+        if (npCard == null && root != null) npCard = new NowPlayingCard(this, root);
+        if (npCard != null) npCard.refresh();
         // A festival that started or ended while Home was in the background: rebuild with or without it.
         if (festive != festival.active(LocalDate.now())) {
             recreate();
@@ -2285,6 +2288,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             greeting.setTextColor(greetingColor);
         }
         if (shamsi) shamsiDate.setText(Shamsi.today(getResources()));
+        if (npCard != null) npCard.refresh();
     }
 
     // ---- race-weekend panel (a theme's race_calendar) -----------------------------------------------
@@ -2533,10 +2537,85 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     }
 
     /** The network pill opens the VPN app when one is configured and installed, otherwise Wi-Fi settings. */
+    @SuppressWarnings("deprecation")
+    private void connectWifi(String ssid, String pass, boolean open) {
+        try {
+            android.net.wifi.WifiManager wm = (android.net.wifi.WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+            if (wm == null) return;
+            if (!wm.isWifiEnabled()) wm.setWifiEnabled(true);
+            if (pass == null) {
+                java.util.List<android.net.wifi.WifiConfiguration> l = wm.getConfiguredNetworks();
+                if (l != null) for (android.net.wifi.WifiConfiguration c : l) {
+                    if (c.SSID != null && c.SSID.equals("\"" + ssid + "\"")) {
+                        wm.disconnect(); wm.enableNetwork(c.networkId, true); wm.reconnect();
+                        Toast.makeText(this, "Connecting: " + ssid, Toast.LENGTH_SHORT).show(); return;
+                    }
+                }
+                if (!open) { showPassBox(ssid); return; }
+            }
+            android.net.wifi.WifiConfiguration cf = new android.net.wifi.WifiConfiguration();
+            cf.SSID = "\"" + ssid + "\"";
+            if (open) cf.allowedKeyManagement.set(0); else cf.preSharedKey = "\"" + pass + "\"";
+            int id = wm.addNetwork(cf);
+            if (id != -1) { wm.disconnect(); wm.enableNetwork(id, true); wm.reconnect(); return; }
+            open(systemIntent(Settings.ACTION_WIFI_SETTINGS));
+        } catch (Exception e) { open(systemIntent(Settings.ACTION_WIFI_SETTINGS)); }
+    }
+    private void showPassBox(String ssid) {
+        View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
+        LinearLayout rows = panel.findViewById(R.id.rows);
+        PopupWindow popup = glassPopup(panel, (int) (270 * density));
+        android.widget.EditText inp = new android.widget.EditText(this);
+        inp.setHint("Password for " + ssid); inp.setHintTextColor(0x88FFFFFF); inp.setTextColor(0xFFFFFFFF);
+        inp.setSingleLine(true); inp.setBackgroundColor(0x22FFFFFF);
+        int p = (int) (12 * density); inp.setPadding(p, p, p, p); rows.addView(inp);
+        addInputRow(rows, popup, R.drawable.ic_wifi, "Connect Now", -1, () -> {
+            String pw = inp.getText().toString().trim(); if (!pw.isEmpty()) connectWifi(ssid, pw, false);
+        });
+        panel.measure(0, 0); popup.setWidth((int) (270 * density)); popup.setSoftInputMode(16);
+        dropIn(popup, panel, btnWifi, Gravity.END); inp.requestFocus();
+    }
+    @SuppressWarnings("deprecation")
     private void openNetworkPill() {
-        Intent i = vpnApp.isEmpty() ? null : getPackageManager().getLeanbackLaunchIntentForPackage(vpnApp);
-        if (i == null && !vpnApp.isEmpty()) i = getPackageManager().getLaunchIntentForPackage(vpnApp);
-        open(i != null ? i : systemIntent(Settings.ACTION_WIFI_SETTINGS));
+        View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
+        LinearLayout rows = panel.findViewById(R.id.rows);
+        PopupWindow popup = glassPopup(panel, (int) (270 * density));
+        CharSequence n = wifiIconOnly ? btnWifi.getContentDescription() : btnWifi.getText();
+        String cur = TextUtils.isEmpty(n) ? getString(R.string.quick_network) : n.toString();
+        addInputRow(rows, popup, R.drawable.ic_wifi, cur, TvInputManager.INPUT_STATE_CONNECTED, () -> root.postDelayed(this::openNetworkPill, 250));
+        try {
+            android.net.wifi.WifiManager wm = (android.net.wifi.WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+            if (wm != null) {
+                wm.startScan(); java.util.List<android.net.wifi.ScanResult> rs = wm.getScanResults();
+                if (rs != null) {
+                    java.util.Collections.sort(rs, (a, b) -> Integer.compare(b.level, a.level));
+                    java.util.Set<String> seen = new java.util.HashSet<>(); seen.add(cur);
+                    LinearLayout list = new LinearLayout(this); list.setOrientation(LinearLayout.VERTICAL);
+                    int c = 0; int rowH = 0;
+                    for (android.net.wifi.ScanResult sr : rs) {
+                        if (sr.SSID == null || sr.SSID.isEmpty() || seen.contains(sr.SSID)) continue;
+                        seen.add(sr.SSID); final String s = sr.SSID;
+                        final boolean op = sr.capabilities == null || !sr.capabilities.contains("WPA");
+                        int b = android.net.wifi.WifiManager.calculateSignalLevel(sr.level, 4);
+                        String sg = b >= 3 ? " [++++]" : (b == 2 ? " [+++-]" : " [++--]");
+                        addInputRow(list, popup, R.drawable.ic_wifi, s + sg, -1, () -> connectWifi(s, null, op));
+                        if (rowH == 0) { View r0 = list.getChildAt(0); r0.measure(0, 0); rowH = r0.getMeasuredHeight(); }
+                        if (++c >= 15) break;
+                    }
+                    if (c > 0) {
+                        addSeparator(rows); android.widget.ScrollView sv = new android.widget.ScrollView(this);
+                        sv.setVerticalScrollBarEnabled(false); sv.addView(list);
+                        int h = rowH > 0 ? rowH * Math.min(c, 3) : (int)(132 * density);
+                        rows.addView(sv, new LinearLayout.LayoutParams(-1, h));
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+        addSeparator(rows);
+        addInputRow(rows, popup, R.drawable.ic_settings, "Network Settings", -1, () -> open(systemIntent(Settings.ACTION_WIFI_SETTINGS)));
+        panel.measure(0, 0); popup.setWidth(Math.max((int)(270*density), Math.min(panel.getMeasuredWidth(), (int)(360*density))));
+        dropIn(popup, panel, btnWifi, getResources().getBoolean(R.bool.rtl_menu_bar) ? Gravity.START : Gravity.END);
+        rows.getChildAt(0).requestFocus();
     }
 
 
