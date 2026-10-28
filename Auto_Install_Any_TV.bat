@@ -21,13 +21,13 @@ tools\venv\Scripts\python.exe -I tools\tv.py "settings put secure screensaver_co
 tools\venv\Scripts\python.exe -I tools\tv.py "settings put global window_animation_scale 0.5"
 tools\venv\Scripts\python.exe -I tools\tv.py "settings put global transition_animation_scale 0.5"
 tools\venv\Scripts\python.exe -I tools\tv.py "settings put global animator_duration_scale 0.5"
-echo [5/5] Debloating Ads, Live TV, Wallpaper & Stock Launcher...
+echo [5/5] Debloating Ads, Wallpaper & Stock Launcher...
+tools\venv\Scripts\python.exe -I tools\tv.py "pm enable --user 0 com.mitv.livetv"
+tools\venv\Scripts\python.exe -I tools\tv.py "pm enable --user 0 com.mitv.livetv.ci_mediatek"
+tools\venv\Scripts\python.exe -I tools\tv.py "pm enable --user 0 com.xiaomi.mitv.smartshare"
+tools\venv\Scripts\python.exe -I tools\tv.py "pm enable --user 0 com.xiaomi.wfdsinkhelperservice"
 powershell -ExecutionPolicy Bypass -File tools\disable.ps1 -TvHost %TV_IP% examples\xiaomi-mitv-mosr4\debloat.txt
-tools\venv\Scripts\python.exe -I tools\tv.py "pm disable-user --user 0 com.mitv.livetv"
-tools\venv\Scripts\python.exe -I tools\tv.py "pm disable-user --user 0 com.mitv.livetv.ci_mediatek"
 tools\venv\Scripts\python.exe -I tools\tv.py "pm disable-user --user 0 com.mitv.dream"
-tools\venv\Scripts\python.exe -I tools\tv.py "pm disable-user --user 0 com.xiaomi.wfdsinkhelperservice"
-tools\venv\Scripts\python.exe -I tools\tv.py "pm disable-user --user 0 com.xiaomi.mitv.smartshare"
 tools\venv\Scripts\python.exe -I tools\tv.py "pm enable --user 0 com.google.android.katniss"
 tools\venv\Scripts\python.exe -I tools\tv.py "am start -a android.intent.action.MAIN -c android.intent.category.HOME"
 echo.
