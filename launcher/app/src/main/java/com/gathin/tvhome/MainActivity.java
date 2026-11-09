@@ -2574,7 +2574,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         addInputRow(rows, popup, R.drawable.ic_wifi, "Connect Now", -1, () -> {
             String pw = inp.getText().toString().trim(); if (!pw.isEmpty()) connectWifi(ssid, pw, false);
         });
-        panel.measure(0, 0); popup.setWidth((int) (270 * density)); popup.setSoftInputMode(16);
+        panel.measure(0, 0); popup.setWidth((int) (270 * density)); popup.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dropIn(popup, panel, btnWifi, Gravity.END); inp.requestFocus();
     }
     @SuppressWarnings("deprecation")
