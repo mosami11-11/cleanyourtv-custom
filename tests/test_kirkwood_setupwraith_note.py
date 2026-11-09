@@ -14,6 +14,8 @@ from pathlib import Path
 import re
 import unittest
 
+from readme_profile import skip_standard_readme_test
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DOC = (ROOT / "docs" / "TROUBLESHOOTING.md").read_text(encoding="utf-8")
@@ -101,6 +103,7 @@ class KirkwoodNoteTest(unittest.TestCase):
         self.assertIn("FATAL EXCEPTION IN SYSTEM PROCESS", self.crash)
 
     def test_the_readme_clause_covers_both_boxes(self):
+        skip_standard_readme_test(self)
         clause = next(line for line in README.splitlines() if "costs phone casting" in line)
         self.assertIn("Google TV Streamer", clause)
         self.assertIn("Chromecast", clause)

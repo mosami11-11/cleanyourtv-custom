@@ -6,7 +6,7 @@
 # Undo:    TV_HOST=<tv ip> tools/restore.sh examples/xiaomi-mitv-mosr4/debloat.txt com.google.android.apps.tv.launcherx
 # Everything is DISABLED for user 0, not uninstalled. Comment out any line you want to keep.
 #
-# Tested: all 27 packages below are disabled on this TV (`pm list packages -d` shows them) with the
+# Tested: all 25 packages below are disabled on this TV (`pm list packages -d` shows them) with the
 # launcher from launcher/ in place and owning Home. They went off in batches of 3-6, a screenshot was
 # taken after every batch and nothing crashed. Inputs (HDMI 1/2, AV, Live TV) reads correctly, the
 # Netflix and SmartTube dock tiles both launch, and mitv.service / overseaservice / livetv stayed up.
@@ -64,10 +64,10 @@ android.autoinstalls.config.xiaomi.amelie   # silent preload installer config
 com.xiaomi.mitv.manualhelp             # on-screen manual (second unit only)
 com.android.printspooler               # print spooler (second unit)
 
-# Mi Cast / Miracast - Chromecast built-in (mediashell) still works without them
+# Mi Cast / Miracast (kept enabled; these are used for Xiaomi screen mirroring)
 # com.mitv.milinkservice              # not on this model
-com.xiaomi.mitv.smartshare
-com.xiaomi.wfdsinkhelperservice
+# com.xiaomi.mitv.smartshare
+# com.xiaomi.wfdsinkhelperservice
 
 # Preloaded apps, off by choice - re-enable any you use
 com.xiaomi.mimusic2                    # Mi Music

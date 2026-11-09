@@ -2544,12 +2544,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (wm == null) return;
             if (!wm.isWifiEnabled()) wm.setWifiEnabled(true);
             if (pass == null) {
-                java.util.List<android.net.wifi.WifiConfiguration> l = wm.getConfiguredNetworks();
+                if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    java.util.List<android.net.wifi.WifiConfiguration> l = wm.getConfiguredNetworks();
                 if (l != null) for (android.net.wifi.WifiConfiguration c : l) {
                     if (c.SSID != null && c.SSID.equals("\"" + ssid + "\"")) {
                         wm.disconnect(); wm.enableNetwork(c.networkId, true); wm.reconnect();
                         Toast.makeText(this, "Connecting: " + ssid, Toast.LENGTH_SHORT).show(); return;
                     }
+                }
                 }
                 if (!open) { showPassBox(ssid); return; }
             }
@@ -2572,7 +2574,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         addInputRow(rows, popup, R.drawable.ic_wifi, "Connect Now", -1, () -> {
             String pw = inp.getText().toString().trim(); if (!pw.isEmpty()) connectWifi(ssid, pw, false);
         });
-        panel.measure(0, 0); popup.setWidth((int) (270 * density)); popup.setSoftInputMode(16);
+        panel.measure(0, 0); popup.setWidth((int) (270 * density)); popup.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dropIn(popup, panel, btnWifi, Gravity.END); inp.requestFocus();
     }
     @SuppressWarnings("deprecation")
@@ -2585,7 +2587,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         addInputRow(rows, popup, R.drawable.ic_wifi, cur, TvInputManager.INPUT_STATE_CONNECTED, () -> root.postDelayed(this::openNetworkPill, 250));
         try {
             android.net.wifi.WifiManager wm = (android.net.wifi.WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-            if (wm != null) {
+            if (wm != null && checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
                 wm.startScan(); java.util.List<android.net.wifi.ScanResult> rs = wm.getScanResults();
                 if (rs != null) {
                     java.util.Collections.sort(rs, (a, b) -> Integer.compare(b.level, a.level));

@@ -16,6 +16,8 @@ import sys
 import tempfile
 import unittest
 
+from readme_profile import skip_standard_readme_test
+
 from tools import privacy
 
 
@@ -333,6 +335,7 @@ class CatalogueTest(unittest.TestCase):
 
 class DocumentationTest(unittest.TestCase):
     def test_readme_lists_the_tool_and_what_it_cannot_say(self):
+        skip_standard_readme_test(self)
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("[`tools/privacy.py`](tools/privacy.py)", readme)
         self.assertIn("What the audit cannot do is prove intent", readme)

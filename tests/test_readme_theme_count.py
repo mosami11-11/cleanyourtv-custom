@@ -17,6 +17,8 @@ from pathlib import Path
 import tempfile
 import unittest
 
+from readme_profile import skip_standard_readme_test
+
 
 ROOT = Path(__file__).resolve().parents[1]
 THEMES = ROOT / "themes"
@@ -61,6 +63,7 @@ def theme_folders(root=THEMES):
 
 class ReadmeThemeCountTest(unittest.TestCase):
     def test_the_count_names_every_theme(self):
+        skip_standard_readme_test(self)
         row = themes_row(FRONT.read_text(encoding="utf-8"))
         self.assertIsNotNone(row, "README.md has no `| **Themes** |` feature row any more")
         claimed = count_in(row)

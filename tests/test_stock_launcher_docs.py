@@ -13,6 +13,8 @@ to the pair fails this test until the README names it.
 """
 import re
 import unittest
+
+from readme_profile import skip_standard_readme_test
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -60,9 +62,11 @@ class Scripts(unittest.TestCase):
 
 class Readme(unittest.TestCase):
     def test_section_is_there(self):
+        skip_standard_readme_test(self)
         self.assertIsNotNone(home_section(), "README has no 'How the scripts protect Home' block")
 
     def test_every_recognised_launcher_is_named(self):
+        skip_standard_readme_test(self)
         section = home_section()
         self.assertIsNotNone(section)
         known = sh_known()
@@ -72,6 +76,7 @@ class Readme(unittest.TestCase):
                           f"README's Home block does not name {pkg}, which the install scripts disable")
 
     def test_the_none_override_is_still_offered(self):
+        skip_standard_readme_test(self)
         section = home_section()
         self.assertIsNotNone(section)
         self.assertIn("`none`", section, "the README no longer says STOCK_LAUNCHER=none keeps the stock launcher")

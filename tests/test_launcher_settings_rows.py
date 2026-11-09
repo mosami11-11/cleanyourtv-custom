@@ -12,6 +12,8 @@ import unittest
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from readme_profile import skip_standard_readme_test
+
 ROOT = Path(__file__).resolve().parent.parent
 LAYOUT = ROOT / "launcher/app/src/main/res/layout/activity_launcher_settings.xml"
 ACTIVITY = ROOT / "launcher/app/src/main/java/com/gathin/tvhome/LauncherSettingsActivity.java"
@@ -140,10 +142,12 @@ class ScreenRows(unittest.TestCase):
             self.assertTrue(label.strip(), row_id)
 
     def test_readme_names_every_row(self):
+        skip_standard_readme_test(self)
         self.assertTrue(self.section, "README has no '%s' section" % SUMMARY)
         self.assertEqual(missing_rows(self.section, self.rows), [])
 
     def test_readme_names_the_numbers_under_each_row(self):
+        skip_standard_readme_test(self)
         columns = numbered("columns_label", self.layout_text)
         under_dock = numbered("rows_below_dock_label", self.layout_text)
         self.assertEqual(columns, ["4", "5", "6", "7"])

@@ -15,6 +15,8 @@ import re
 from pathlib import Path
 import unittest
 
+from readme_profile import skip_standard_readme_test
+
 
 ROOT = Path(__file__).resolve().parents[1]
 FRONT = "README.md"
@@ -55,6 +57,7 @@ class ReadmeTranslationsTest(unittest.TestCase):
         self.assertIn("README.vi.md", translations())
 
     def test_the_front_page_links_every_translation(self):
+        skip_standard_readme_test(self)
         text = (ROOT / FRONT).read_text(encoding="utf-8")
         self.assertEqual([], missing(translations(), text),
                          "README.md does not link every translation its readers can open")

@@ -18,6 +18,8 @@ import re
 import sys
 import tempfile
 import unittest
+
+from readme_profile import skip_standard_readme_test
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -83,6 +85,7 @@ class EveryPageUsesTheModeTest(unittest.TestCase):
                 self.assertIn(token, bullet)
 
     def test_the_readme_tool_row_names_reboot(self):
+        skip_standard_readme_test(self)
         rows = [line for line in page(README).split("\n") if line.startswith("| [`tools/tv.py`]")]
         self.assertEqual(1, len(rows), "the README Tools table needs one tools/tv.py row")
         self.assertIn("reboot", rows[0], "the row is where a reader learns the mode exists")

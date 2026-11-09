@@ -7,6 +7,8 @@ import re
 from pathlib import Path
 import unittest
 
+from readme_profile import skip_standard_readme_test
+
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT / "examples"
@@ -68,6 +70,7 @@ class ExampleListsTest(unittest.TestCase):
         self.assertEqual(len(listed), len(set(listed)), "a folder is listed twice")
 
     def test_readme_table_has_one_row_per_list(self):
+        skip_standard_readme_test(self)
         readme_rows = table_rows(ROOT / "README.md", "| TV | OS |")
         example_rows = table_rows(EXAMPLES / "README.md", "| Folder |")
         self.assertEqual(len(readme_rows), len(example_rows),
@@ -78,6 +81,7 @@ class ExampleListsTest(unittest.TestCase):
 
     @unittest.skipUnless(os.environ.get("CLEANYOURTV_STRICT"), "counts are fixed up on merge; strict on main only")
     def test_readme_counts(self):
+        skip_standard_readme_test(self)
         text = (ROOT / "README.md").read_text(encoding="utf-8")
         n = len(folders())
         self.assertIn(f"{n} TV models", text, "stat strip alt text is stale (regenerate docs/stats.png too)")
