@@ -2544,12 +2544,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (wm == null) return;
             if (!wm.isWifiEnabled()) wm.setWifiEnabled(true);
             if (pass == null) {
-                java.util.List<android.net.wifi.WifiConfiguration> l = wm.getConfiguredNetworks();
+                if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    java.util.List<android.net.wifi.WifiConfiguration> l = wm.getConfiguredNetworks();
                 if (l != null) for (android.net.wifi.WifiConfiguration c : l) {
                     if (c.SSID != null && c.SSID.equals("\"" + ssid + "\"")) {
                         wm.disconnect(); wm.enableNetwork(c.networkId, true); wm.reconnect();
                         Toast.makeText(this, "Connecting: " + ssid, Toast.LENGTH_SHORT).show(); return;
                     }
+                }
                 }
                 if (!open) { showPassBox(ssid); return; }
             }
