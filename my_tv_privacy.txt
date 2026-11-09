@@ -1,8 +1,8 @@
-# Privacy audit of the TV at 192.168.1.143, written by tools/privacy.py.
+# Privacy audit of the TV, written by tools/privacy.py.
 # Voice, ACR and telemetry candidates this TV answered for. Everything is DISABLED, not
 # uninstalled, and the undo is the one every list uses:
-#   TV_HOST=192.168.1.143 tools/disable.sh privacy.txt
-#   TV_HOST=192.168.1.143 tools/restore.sh privacy.txt
+#   TV_HOST=<tv ip> tools/disable.sh my_tv_privacy.txt
+#   TV_HOST=<tv ip> tools/restore.sh my_tv_privacy.txt
 #
 # Each line says what the package is and why it is here. Nothing below is proven to record
 # anything: the audit reports what the firmware and the packages declare.

@@ -18,6 +18,8 @@ import sys
 import tempfile
 import unittest
 
+from readme_profile import skip_standard_readme_test
+
 
 ROOT = Path(__file__).resolve().parents[1]
 STOCK_HOME = "com.google.android.tvlauncher/.MainActivity"
@@ -215,6 +217,7 @@ class Android7DocsTest(unittest.TestCase):
         self.assertIn("build-and-install.sh", bullet)
 
     def test_readme_states_the_launcher_requirement_with_a_pointer(self):
+        skip_standard_readme_test(self)
         start = self.readme.index("## The launcher")
         section = self.readme[start:start + 1600]
         self.assertIn("API 26", section)

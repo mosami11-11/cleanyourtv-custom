@@ -2585,7 +2585,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         addInputRow(rows, popup, R.drawable.ic_wifi, cur, TvInputManager.INPUT_STATE_CONNECTED, () -> root.postDelayed(this::openNetworkPill, 250));
         try {
             android.net.wifi.WifiManager wm = (android.net.wifi.WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-            if (wm != null) {
+            if (wm != null && checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
                 wm.startScan(); java.util.List<android.net.wifi.ScanResult> rs = wm.getScanResults();
                 if (rs != null) {
                     java.util.Collections.sort(rs, (a, b) -> Integer.compare(b.level, a.level));

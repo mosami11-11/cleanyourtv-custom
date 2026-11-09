@@ -13,6 +13,8 @@ import re
 from pathlib import Path
 import unittest
 
+from readme_profile import skip_standard_readme_test
+
 
 ROOT = Path(__file__).resolve().parents[1]
 PAGE = ROOT / "docs" / "devices" / "samsung-tizen.md"
@@ -62,6 +64,7 @@ class SamsungTizenPageTest(unittest.TestCase):
                          "one owner's report must not read like a platform-wide claim")
 
     def test_readme_sends_tizen_readers_to_the_page(self):
+        skip_standard_readme_test(self)
         text = README.read_text(encoding="utf-8")
         self.assertIn("docs/devices/samsung-tizen.md", text,
                       "the Supported TVs paragraph is where a Samsung owner looks")

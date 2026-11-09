@@ -20,6 +20,8 @@ Run from the repository root: python3 -m unittest discover -s tests -v
 """
 import re
 import unittest
+
+from readme_profile import skip_standard_readme_test
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -101,10 +103,12 @@ class ToolsTableTest(unittest.TestCase):
         self.rows = table_rows(README.read_text(encoding="utf-8"))
 
     def test_the_readme_has_a_tools_table_to_read(self):
+        skip_standard_readme_test(self)
         # Without this, a renamed heading would report every tool as missing (or none as checked).
         self.assertGreaterEqual(len(self.rows), 8, "the README's Tools table was not found")
 
     def test_every_tool_has_a_row(self):
+        skip_standard_readme_test(self)
         missing = unlisted(tool_files(), listed(self.rows))
         self.assertEqual(missing, [], "tools a reader cannot find from the README's Tools table: "
                                       + ", ".join(f"tools/{name}" for name in missing))

@@ -56,3 +56,7 @@ powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost <TV_IP> themes\
 * `launcher/app/src/main/java/com/gathin/tvhome/MediaNoteService.java` — `NotificationListenerService` bridge for reading active media sessions.
 * `launcher/app/src/main/java/com/gathin/tvhome/MainActivity.java` — Custom `openNetworkPill()` 3-row scrollable Wi-Fi scanner, `connectWifi()`, `showPassBox()`, and `NowPlayingCard` lifecycle binding.
 * `Auto_Install_Any_TV.bat` & `release/launcher-custom.apk` — Turnkey deployment script and compiled binary.
+
+## 🧰 Project Resources
+
+For repository instructions and contribution guidance, see [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
